@@ -765,8 +765,8 @@ a:focus {
     --secondary-color: #cbd5e1;
     --accent-color: #7dd3fc;
     --text-primary: #f8fafc;
-    --text-secondary: #e2e8f0;
-    --text-light: #cbd5e1;
+    --text-secondary: #e5e7eb;
+    --text-light: #d1d5db;
     --background-primary: #0f172a;
     --background-secondary: #111827;
     --background-accent: #1e293b;
@@ -813,15 +813,20 @@ a:focus {
   
   .title,
   .subtitle,
-  .content,
   .publication-authors {
     color: var(--text-primary) !important;
   }
 
-  .content h3,
-  .content h4,
-  .content h5,
-  .content h6 {
+  .content.has-text-justified,
+  .content.has-text-justified p,
+  .content.has-text-justified li {
+    color: var(--text-secondary) !important;
+  }
+
+  .content.has-text-justified h3,
+  .content.has-text-justified h4,
+  .content.has-text-justified h5,
+  .content.has-text-justified h6 {
     color: var(--text-primary) !important;
   }
 }
