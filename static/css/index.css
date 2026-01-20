@@ -462,13 +462,13 @@ body {
   font-size: 0.85rem;
   color: var(--text-primary);
   overflow: hidden;
+  width: 0%;
 }
 
 .bar::before {
   content: "";
   position: absolute;
   inset: 0;
-  width: var(--bar-width, 0%);
   background: var(--primary-color);
   opacity: 0.85;
 }
@@ -481,7 +481,6 @@ body {
   background: var(--accent-color);
 }
 
-.bar span,
 .bar {
   z-index: 1;
 }
@@ -489,6 +488,15 @@ body {
 .results-table th,
 .results-table td {
   font-size: 0.95rem;
+}
+
+.results-table.is-highlighted tbody tr {
+  background: color-mix(in srgb, var(--background-accent) 80%, transparent);
+  transition: background 0.6s ease;
+}
+
+.image-frame {
+  position: relative;
 }
 
 .image-placeholder {
@@ -502,6 +510,37 @@ body {
   text-align: center;
   padding: 1rem;
   background: var(--background-accent);
+  opacity: 0;
+}
+
+.image-placeholder.is-visible {
+  display: flex;
+  opacity: 1;
+}
+
+#confusion-image,
+#calibration-image {
+  opacity: 0;
+}
+
+#confusion-image.is-visible,
+#calibration-image.is-visible {
+  opacity: 1;
+}
+
+.image-frame.is-visible .sweep-mask {
+  animation: sweep 1.4s ease forwards;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results-table.is-highlighted tbody tr {
+    background: transparent;
+  }
+
+  .image-frame.is-visible .sweep-mask {
+    animation: none !important;
+  }
 }
 
 .ood-section {
@@ -511,6 +550,93 @@ body {
 .ood-note {
   color: var(--text-secondary);
   margin-bottom: 1rem;
+}
+
+/* Results reveal animation */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bar {
+  transition: width 0.6s ease;
+  opacity: 0;
+}
+
+.bar.is-animated {
+  width: var(--bar-width, 0%);
+}
+
+.metric-card .metric-value,
+.metric-card .metric-label,
+.bar-legend,
+.results-table,
+.image-placeholder,
+#confusion-image,
+#calibration-image {
+  transition: opacity 0.6s ease;
+}
+
+.delta-annotation {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--background-accent);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.delta-annotation.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.sweep-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.1), transparent);
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+@keyframes sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll,
+  .bar,
+  .delta-annotation,
+  .metric-card .metric-value,
+  .metric-card .metric-label,
+  .bar-legend,
+  .results-table,
+  .image-placeholder,
+  #confusion-image,
+  #calibration-image {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .bar {
+    opacity: 1;
+    width: var(--bar-width, 0%);
+  }
 }
 
 /* BibTeX Styling */

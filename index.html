@@ -326,7 +326,7 @@
           </p>
 
           <h3>Headline metrics</h3>
-          <div class="columns is-multiline results-cards">
+          <div class="columns is-multiline results-cards reveal-on-scroll">
             <div class="column is-one-third">
               <div class="card metric-card">
                 <div class="card-content">
@@ -381,7 +381,7 @@
           </div>
 
           <h3>Baseline comparison</h3>
-          <div class="bar-chart" id="baseline-chart">
+          <div class="bar-chart reveal-on-scroll" id="baseline-chart">
             <div class="bar-legend">
               <span class="legend-item"><span class="legend-swatch legend-acc"></span>Top-1 Accuracy</span>
               <span class="legend-item"><span class="legend-swatch legend-f1"></span>Macro F1</span>
@@ -390,7 +390,7 @@
           </div>
 
           <h3>Validation vs Test</h3>
-          <div class="table-container">
+          <div class="table-container reveal-on-scroll">
             <table class="table is-fullwidth results-table">
               <thead>
                 <tr>
@@ -418,11 +418,14 @@
           </div>
 
           <h3>Confusion matrix</h3>
-          <div class="columns is-vcentered">
+          <div class="columns is-vcentered reveal-on-scroll">
             <div class="column is-half">
-              <img id="confusion-image" src="static/images/confusion_matrix.png" alt="Confusion matrix">
-              <div class="image-placeholder" id="confusion-placeholder">
-                Confusion matrix will appear here (static/images/confusion_matrix.png)
+              <div class="image-frame" id="confusion-frame">
+                <img id="confusion-image" src="static/images/confusion_matrix.png" alt="Confusion matrix">
+                <div class="image-placeholder" id="confusion-placeholder">
+                  Confusion matrix will appear here (static/images/confusion_matrix.png)
+                </div>
+                <div class="sweep-mask" aria-hidden="true"></div>
               </div>
             </div>
             <div class="column is-half">
@@ -432,11 +435,14 @@
           </div>
 
           <h3>Calibration</h3>
-          <div class="columns is-vcentered">
+          <div class="columns is-vcentered reveal-on-scroll">
             <div class="column is-half">
-              <img id="calibration-image" src="static/images/calibration_curve.png" alt="Calibration curve">
-              <div class="image-placeholder" id="calibration-placeholder">
-                Calibration curve will appear here (static/images/calibration_curve.png)
+              <div class="image-frame" id="calibration-frame">
+                <img id="calibration-image" src="static/images/calibration_curve.png" alt="Calibration curve">
+                <div class="image-placeholder" id="calibration-placeholder">
+                  Calibration curve will appear here (static/images/calibration_curve.png)
+                </div>
+                <div class="sweep-mask" aria-hidden="true"></div>
               </div>
             </div>
             <div class="column is-half">
@@ -445,7 +451,7 @@
             </div>
           </div>
 
-          <div id="ood-results" class="ood-section">
+          <div id="ood-results" class="ood-section reveal-on-scroll">
             <h3>Cross-dataset generalization</h3>
             <p class="ood-note">
               OOD metrics highlight performance under domain shift and should be interpreted relative to in-dataset results.
