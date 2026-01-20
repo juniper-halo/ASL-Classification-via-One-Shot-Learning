@@ -372,6 +372,8 @@ body {
 .metric-card {
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 .metric-value {
