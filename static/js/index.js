@@ -158,12 +158,12 @@ function setupCanvasSize(canvas, height = 320) {
     return ctx;
 }
 
-function drawConfusionMatrix(canvas, labels, matrix, progress) {
-    const ctx = setupCanvasSize(canvas, 320);
+function drawConfusionMatrix(canvas, labels, matrix, progress, highlight) {
+    const ctx = setupCanvasSize(canvas, 360);
     if (!ctx) return;
     const width = canvas.clientWidth;
-    const height = 320;
-    const padding = 48;
+    const height = 360;
+    const padding = 56;
     const gridSize = Math.min(width - padding * 2, height - padding * 2);
     const cellSize = gridSize / labels.length;
 
@@ -176,11 +176,19 @@ function drawConfusionMatrix(canvas, labels, matrix, progress) {
         for (let j = 0; j < labels.length; j++) {
             const value = matrix[i][j] * progress;
             const alpha = Math.min(value / maxVal, 1);
-            ctx.fillStyle = `rgba(90, 164, 255, ${0.15 + alpha * 0.7})`;
+            ctx.fillStyle = `rgba(90, 164, 255, ${0.12 + alpha * 0.78})`;
             const x = padding + j * cellSize;
             const y = padding + i * cellSize;
             ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
         }
+    }
+
+    if (highlight) {
+        const hx = padding + highlight.col * cellSize;
+        const hy = padding + highlight.row * cellSize;
+        ctx.strokeStyle = 'rgba(248, 250, 252, 0.9)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(hx, hy, cellSize - 2, cellSize - 2);
     }
 
     ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -192,14 +200,25 @@ function drawConfusionMatrix(canvas, labels, matrix, progress) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
+    const step = labels.length > 24 ? 3 : (labels.length > 14 ? 2 : 1);
     labels.forEach((label, idx) => {
+        if (idx % step !== 0) return;
         const x = padding + idx * cellSize + cellSize / 2;
         ctx.fillText(label, x, padding - 18);
         ctx.fillText(label, padding - 18, padding + idx * cellSize + cellSize / 2);
     });
+
+    ctx.fillStyle = 'rgba(226,232,240,0.6)';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.fillText('Predicted', padding + gridSize / 2, height - 16);
+    ctx.save();
+    ctx.translate(16, padding + gridSize / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('True', 0, 0);
+    ctx.restore();
 }
 
-function drawCalibrationCurve(canvas, bins, accuracy, confidence, progress) {
+function drawCalibrationCurve(canvas, bins, accuracy, confidence, progress, highlightIndex) {
     const ctx = setupCanvasSize(canvas, 280);
     if (!ctx) return;
     const width = canvas.clientWidth;
@@ -214,13 +233,13 @@ function drawCalibrationCurve(canvas, bins, accuracy, confidence, progress) {
     ctx.lineWidth = 1;
     ctx.strokeRect(padding, padding, plotW, plotH);
 
-    ctx.strokeStyle = 'rgba(226,232,240,0.5)';
+    ctx.strokeStyle = 'rgba(226,232,240,0.35)';
     ctx.beginPath();
     ctx.moveTo(padding, padding + plotH);
     ctx.lineTo(padding + plotW, padding);
     ctx.stroke();
 
-    ctx.strokeStyle = 'rgba(90, 164, 255, 0.9)';
+    ctx.strokeStyle = 'rgba(90, 164, 255, 0.95)';
     ctx.lineWidth = 2;
     ctx.beginPath();
     bins.forEach((bin, idx) => {
@@ -236,11 +255,93 @@ function drawCalibrationCurve(canvas, bins, accuracy, confidence, progress) {
     });
     ctx.stroke();
 
+    if (typeof highlightIndex === 'number') {
+        const x = padding + bins[highlightIndex] * plotW;
+        const y = padding + (1 - accuracy[highlightIndex]) * plotH;
+        ctx.fillStyle = 'rgba(248, 250, 252, 0.9)';
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.fillStyle = 'rgba(226,232,240,0.5)';
+    ctx.fillText('Confidence', padding + plotW / 2, height - 6);
+    ctx.save();
+    ctx.translate(12, padding + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Accuracy', 0, 0);
+    ctx.restore();
+
     ctx.fillStyle = 'rgba(226,232,240,0.8)';
     ctx.font = '11px Inter, sans-serif';
     ctx.fillText('0.0', padding, padding + plotH + 14);
     ctx.fillText('1.0', padding + plotW - 12, padding + plotH + 14);
     ctx.fillText('1.0', padding - 18, padding + 4);
+}
+
+function attachConfusionHover(canvas, tooltip, data) {
+    if (!canvas || !tooltip) return;
+    const labels = data.confusion.labels;
+    const matrix = data.confusion.matrix || generateRandomMatrix(labels.length);
+
+    canvas.addEventListener('mousemove', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        const padding = 56;
+        const gridSize = Math.min(rect.width - padding * 2, 360 - padding * 2);
+        const cellSize = gridSize / labels.length;
+        const col = Math.floor((x - padding) / cellSize);
+        const row = Math.floor((y - padding) / cellSize);
+
+        if (col >= 0 && row >= 0 && col < labels.length && row < labels.length) {
+            const value = matrix[row][col];
+            tooltip.textContent = `${labels[row]} → ${labels[col]}: ${value}`;
+            tooltip.style.transform = `translate(${x + 12}px, ${y - 8}px)`;
+            tooltip.classList.add('is-visible');
+            drawConfusionMatrix(canvas, labels, matrix, 1, { row, col });
+        } else {
+            tooltip.classList.remove('is-visible');
+            drawConfusionMatrix(canvas, labels, matrix, 1);
+        }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('is-visible');
+        drawConfusionMatrix(canvas, labels, matrix, 1);
+    });
+}
+
+function attachCalibrationHover(canvas, tooltip, data) {
+    if (!canvas || !tooltip) return;
+    const bins = data.calibration.bins;
+    const accuracy = data.calibration.accuracy || generateCalibrationStub(bins).accuracy;
+    const confidence = data.calibration.confidence || generateCalibrationStub(bins).confidence;
+
+    canvas.addEventListener('mousemove', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const padding = 32;
+        const plotW = rect.width - padding * 2;
+        const ratio = Math.max(0, Math.min(1, (x - padding) / plotW));
+        const idx = Math.round(ratio * (bins.length - 1));
+
+        if (idx >= 0 && idx < bins.length) {
+            tooltip.textContent = `bin ${bins[idx].toFixed(2)} | acc ${accuracy[idx].toFixed(2)} | conf ${confidence[idx].toFixed(2)}`;
+            tooltip.style.transform = `translate(${x + 12}px, 12px)`;
+            tooltip.classList.add('is-visible');
+            drawCalibrationCurve(canvas, bins, accuracy, confidence, 1, idx);
+        } else {
+            tooltip.classList.remove('is-visible');
+            drawCalibrationCurve(canvas, bins, accuracy, confidence, 1);
+        }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('is-visible');
+        drawCalibrationCurve(canvas, bins, accuracy, confidence, 1);
+    });
 }
 
 function formatEce(value) {
@@ -376,6 +477,8 @@ function renderConfusionAndCalibration(data) {
 
     const confusionCanvas = document.getElementById('confusion-canvas');
     const calibrationCanvas = document.getElementById('calibration-canvas');
+    const confusionTooltip = document.getElementById('confusion-tooltip');
+    const calibrationTooltip = document.getElementById('calibration-tooltip');
     const duration = prefersReducedMotion() ? 1 : 900;
     const start = performance.now();
 
@@ -387,6 +490,15 @@ function renderConfusionAndCalibration(data) {
 
         if (elapsed < 1) {
             requestAnimationFrame(tick);
+        } else {
+            if (!confusionCanvas.dataset.hoverBound) {
+                attachConfusionHover(confusionCanvas, confusionTooltip, data);
+                confusionCanvas.dataset.hoverBound = 'true';
+            }
+            if (!calibrationCanvas.dataset.hoverBound) {
+                attachCalibrationHover(calibrationCanvas, calibrationTooltip, data);
+                calibrationCanvas.dataset.hoverBound = 'true';
+            }
         }
     }
 

@@ -420,7 +420,11 @@
           <h3>Confusion matrix</h3>
           <div class="columns is-vcentered reveal-on-scroll">
             <div class="column is-half">
-              <canvas id="confusion-canvas" class="results-canvas" aria-label="Confusion matrix"></canvas>
+              <div class="results-canvas-wrap">
+                <canvas id="confusion-canvas" class="results-canvas results-canvas--square" aria-label="Confusion matrix"></canvas>
+                <div class="canvas-tooltip" id="confusion-tooltip"></div>
+              </div>
+              <p class="chart-caption">Rows = true labels, columns = predicted labels.</p>
             </div>
             <div class="column is-half">
               <h4 class="is-size-5">Most Confused Pairs</h4>
@@ -431,7 +435,11 @@
           <h3>Calibration</h3>
           <div class="columns is-vcentered reveal-on-scroll">
             <div class="column is-half">
-              <canvas id="calibration-canvas" class="results-canvas" aria-label="Calibration curve"></canvas>
+              <div class="results-canvas-wrap">
+                <canvas id="calibration-canvas" class="results-canvas results-canvas--wide" aria-label="Calibration curve"></canvas>
+                <div class="canvas-tooltip" id="calibration-tooltip"></div>
+              </div>
+              <p class="chart-caption">Blue = accuracy, gray = perfect calibration.</p>
             </div>
             <div class="column is-half">
               <p class="metric-label">ECE</p>

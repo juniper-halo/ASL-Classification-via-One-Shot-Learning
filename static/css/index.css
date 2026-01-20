@@ -507,6 +507,48 @@ body {
   border-radius: var(--border-radius);
   background: var(--background-accent);
   border: 1px solid var(--border-color);
+  cursor: crosshair;
+}
+
+.results-canvas--square {
+  height: 360px;
+}
+
+.results-canvas--wide {
+  height: 280px;
+}
+
+.results-canvas-wrap {
+  position: relative;
+}
+
+.canvas-tooltip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0.4rem 0.6rem;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  transform: translate(8px, -8px);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.canvas-tooltip.is-visible {
+  opacity: 1;
+}
+
+.chart-caption {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
 }
 
 .image-placeholder {
