@@ -364,6 +364,155 @@ body {
   text-decoration: underline;
 }
 
+/* Results section helpers */
+.results-cards .card {
+  height: 100%;
+}
+
+.metric-card {
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metric-label {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--background-accent);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bar-chart {
+  margin: 1rem 0 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  background: var(--background-primary);
+}
+
+.bar-legend {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 6px;
+  border-radius: 999px;
+}
+
+.legend-acc {
+  background: var(--primary-color);
+}
+
+.legend-f1 {
+  background: var(--accent-color);
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.bar-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bar-values {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.bar {
+  position: relative;
+  background: var(--background-accent);
+  border-radius: 999px;
+  height: 28px;
+  padding: 0 0.75rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: var(--bar-width, 0%);
+  background: var(--primary-color);
+  opacity: 0.85;
+}
+
+.bar-acc::before {
+  background: var(--primary-color);
+}
+
+.bar-f1::before {
+  background: var(--accent-color);
+}
+
+.bar span,
+.bar {
+  z-index: 1;
+}
+
+.results-table th,
+.results-table td {
+  font-size: 0.95rem;
+}
+
+.image-placeholder {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 1rem;
+  background: var(--background-accent);
+}
+
+.ood-section {
+  margin-top: 2rem;
+}
+
+.ood-note {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
 /* BibTeX Styling */
 pre {
   background: var(--background-accent) !important;

@@ -2,6 +2,141 @@ window.HELP_IMPROVE_VIDEOJS = false;
 
 // More Works dropdown removed (UI deleted); keep CSS intact for potential reuse.
 
+// TODO: fetch static/data/test_metrics.json and map evaluator outputs into resultsData.
+const resultsData = {
+    test: { accuracy: 0.00, macroF1: 0.00, top5: 0.00, ece: 0.00, latencyMs: 0.0, throughput: 0.0 },
+    dataset: { name: "HF ASL Dataset", split: "test", isOOD: false },
+    validationBest: { epoch: 0, accuracy: 0.00, macroF1: 0.00 },
+    baselines: [
+        { name: "Zero-shot CLIP", accuracy: 0.00, macroF1: 0.00 },
+        { name: "Linear-probe CLIP", accuracy: 0.00, macroF1: 0.00 },
+        { name: "Fine-tuned (Ours)", accuracy: 0.00, macroF1: 0.00 }
+    ],
+    confusion: { imagePath: "static/images/confusion_matrix.png", mostConfusedPairs: [["O","P"],["M","N"]] },
+    calibration: { imagePath: "static/images/calibration_curve.png", ece: 0.00 }
+    // optional:
+    // ood: { dataset: { name: "Kaggle ASL Alphabet", split: "test", isOOD: true }, test: {...} }
+};
+
+function formatPercent(value) {
+    if (typeof value !== 'number') return '0.00';
+    return (value * 100).toFixed(2) + '%';
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.textContent = value;
+    }
+}
+
+function renderBaselineChart(baselines) {
+    const container = document.getElementById('baseline-chart-rows');
+    if (!container) return;
+    container.innerHTML = '';
+
+    baselines.forEach((baseline) => {
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+
+        const label = document.createElement('div');
+        label.className = 'bar-label';
+        label.textContent = baseline.name;
+
+        const bars = document.createElement('div');
+        bars.className = 'bar-values';
+
+        const accBar = document.createElement('div');
+        accBar.className = 'bar bar-acc';
+        accBar.style.setProperty('--bar-width', (baseline.accuracy * 100).toFixed(1) + '%');
+        accBar.textContent = formatPercent(baseline.accuracy);
+
+        const f1Bar = document.createElement('div');
+        f1Bar.className = 'bar bar-f1';
+        f1Bar.style.setProperty('--bar-width', (baseline.macroF1 * 100).toFixed(1) + '%');
+        f1Bar.textContent = formatPercent(baseline.macroF1);
+
+        bars.appendChild(accBar);
+        bars.appendChild(f1Bar);
+
+        row.appendChild(label);
+        row.appendChild(bars);
+        container.appendChild(row);
+    });
+}
+
+function setImageWithFallback(imageId, placeholderId, imagePath) {
+    const img = document.getElementById(imageId);
+    const placeholder = document.getElementById(placeholderId);
+    if (!img || !placeholder) return;
+
+    placeholder.style.display = 'none';
+    img.src = imagePath;
+
+    img.onerror = function() {
+        img.style.display = 'none';
+        placeholder.style.display = 'flex';
+    };
+
+    img.onload = function() {
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    };
+}
+
+function renderResults(data) {
+    if (!data) return;
+
+    setText('metric-test-acc', formatPercent(data.test.accuracy));
+    setText('metric-test-f1', formatPercent(data.test.macroF1));
+    setText('metric-test-top5', formatPercent(data.test.top5));
+    setText('metric-test-ece', data.test.ece.toFixed(3));
+
+    if (data.test.latencyMs && data.test.latencyMs > 0) {
+        setText('metric-throughput', data.test.latencyMs.toFixed(1));
+        setText('metric-throughput-label', 'Latency (ms/img)');
+    } else {
+        setText('metric-throughput', data.test.throughput.toFixed(1));
+        setText('metric-throughput-label', 'Throughput (img/s)');
+    }
+
+    setText('metric-dataset', data.dataset.name);
+    setText('dataset-badge', data.dataset.isOOD ? 'OOD Test' : 'In-dataset Test');
+
+    renderBaselineChart(data.baselines || []);
+
+    setText('val-acc', formatPercent(data.validationBest.accuracy));
+    setText('val-f1', formatPercent(data.validationBest.macroF1));
+    setText('val-epoch', data.validationBest.epoch.toString());
+    setText('test-acc', formatPercent(data.test.accuracy));
+    setText('test-f1', formatPercent(data.test.macroF1));
+
+    const pairs = document.getElementById('confusion-pairs');
+    if (pairs && data.confusion && data.confusion.mostConfusedPairs) {
+        pairs.innerHTML = '';
+        data.confusion.mostConfusedPairs.forEach((pair) => {
+            const item = document.createElement('li');
+            item.textContent = pair.join(' vs ');
+            pairs.appendChild(item);
+        });
+    }
+
+    setImageWithFallback('confusion-image', 'confusion-placeholder', data.confusion.imagePath);
+    setImageWithFallback('calibration-image', 'calibration-placeholder', data.calibration.imagePath);
+    setText('calibration-ece', data.calibration.ece.toFixed(3));
+
+    const oodSection = document.getElementById('ood-results');
+    if (oodSection && data.ood) {
+        oodSection.style.display = 'block';
+        setText('ood-acc', formatPercent(data.ood.test.accuracy));
+        setText('ood-top5', formatPercent(data.ood.test.top5));
+        setText('ood-f1', formatPercent(data.ood.test.macroF1));
+        setText('ood-ece', data.ood.test.ece.toFixed(3));
+    } else if (oodSection) {
+        oodSection.style.display = 'none';
+    }
+}
+
 // Copy BibTeX to clipboard
 function copyBibTeX() {
     const bibtexElement = document.getElementById('bibtex-code');
@@ -105,4 +240,5 @@ $(document).ready(function() {
     // Setup video autoplay for carousel
     setupVideoCarouselAutoplay();
 
+    renderResults(resultsData);
 })

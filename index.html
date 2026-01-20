@@ -314,6 +314,184 @@
 </section>
 <!-- End of Method -->
 
+<!-- Results -->
+<section class="section hero is-light" id="results">
+  <div class="container is-max-widescreen">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-10">
+        <h2 class="title is-3">Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            We report results on (i) a held-out validation split, (ii) the final test split, and optionally (iii) cross-dataset OOD evaluation when available.
+          </p>
+
+          <h3>Headline metrics</h3>
+          <div class="columns is-multiline results-cards">
+            <div class="column is-one-third">
+              <div class="card metric-card">
+                <div class="card-content">
+                  <p class="metric-value" id="metric-test-acc">0.00</p>
+                  <p class="metric-label">Test Top-1 Accuracy</p>
+                </div>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div class="card metric-card">
+                <div class="card-content">
+                  <p class="metric-value" id="metric-test-f1">0.00</p>
+                  <p class="metric-label">Test Macro F1</p>
+                </div>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div class="card metric-card">
+                <div class="card-content">
+                  <p class="metric-value" id="metric-test-top5">0.00</p>
+                  <p class="metric-label">Test Top-5 Accuracy</p>
+                </div>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div class="card metric-card">
+                <div class="card-content">
+                  <p class="metric-value" id="metric-test-ece">0.00</p>
+                  <p class="metric-label">Test ECE</p>
+                </div>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div class="card metric-card">
+                <div class="card-content">
+                  <p class="metric-value" id="metric-throughput">0.0</p>
+                  <p class="metric-label" id="metric-throughput-label">Latency (ms/img)</p>
+                </div>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div class="card metric-card">
+                <div class="card-content">
+                  <p class="metric-value" id="metric-dataset">HF ASL Dataset</p>
+                  <p class="metric-label">
+                    Dataset
+                    <span class="badge" id="dataset-badge">In-dataset Test</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3>Baseline comparison</h3>
+          <div class="bar-chart" id="baseline-chart">
+            <div class="bar-legend">
+              <span class="legend-item"><span class="legend-swatch legend-acc"></span>Top-1 Accuracy</span>
+              <span class="legend-item"><span class="legend-swatch legend-f1"></span>Macro F1</span>
+            </div>
+            <div class="bar-rows" id="baseline-chart-rows"></div>
+          </div>
+
+          <h3>Validation vs Test</h3>
+          <div class="table-container">
+            <table class="table is-fullwidth results-table">
+              <thead>
+                <tr>
+                  <th>Split</th>
+                  <th>Accuracy</th>
+                  <th>Macro F1</th>
+                  <th>Epoch</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Best Validation</td>
+                  <td id="val-acc">0.00</td>
+                  <td id="val-f1">0.00</td>
+                  <td id="val-epoch">0</td>
+                </tr>
+                <tr>
+                  <td>Final Test</td>
+                  <td id="test-acc">0.00</td>
+                  <td id="test-f1">0.00</td>
+                  <td>-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Confusion matrix</h3>
+          <div class="columns is-vcentered">
+            <div class="column is-half">
+              <img id="confusion-image" src="static/images/confusion_matrix.png" alt="Confusion matrix">
+              <div class="image-placeholder" id="confusion-placeholder">
+                Confusion matrix will appear here (static/images/confusion_matrix.png)
+              </div>
+            </div>
+            <div class="column is-half">
+              <h4 class="is-size-5">Most Confused Pairs</h4>
+              <ul id="confusion-pairs"></ul>
+            </div>
+          </div>
+
+          <h3>Calibration</h3>
+          <div class="columns is-vcentered">
+            <div class="column is-half">
+              <img id="calibration-image" src="static/images/calibration_curve.png" alt="Calibration curve">
+              <div class="image-placeholder" id="calibration-placeholder">
+                Calibration curve will appear here (static/images/calibration_curve.png)
+              </div>
+            </div>
+            <div class="column is-half">
+              <p class="metric-label">ECE</p>
+              <p class="metric-value" id="calibration-ece">0.00</p>
+            </div>
+          </div>
+
+          <div id="ood-results" class="ood-section">
+            <h3>Cross-dataset generalization</h3>
+            <p class="ood-note">
+              OOD metrics highlight performance under domain shift and should be interpreted relative to in-dataset results.
+            </p>
+            <div class="columns is-multiline results-cards">
+              <div class="column is-one-quarter">
+                <div class="card metric-card">
+                  <div class="card-content">
+                    <p class="metric-value" id="ood-acc">0.00</p>
+                    <p class="metric-label">OOD Top-1</p>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-one-quarter">
+                <div class="card metric-card">
+                  <div class="card-content">
+                    <p class="metric-value" id="ood-top5">0.00</p>
+                    <p class="metric-label">OOD Top-5</p>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-one-quarter">
+                <div class="card metric-card">
+                  <div class="card-content">
+                    <p class="metric-value" id="ood-f1">0.00</p>
+                    <p class="metric-label">OOD Macro F1</p>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-one-quarter">
+                <div class="card metric-card">
+                  <div class="card-content">
+                    <p class="metric-value" id="ood-ece">0.00</p>
+                    <p class="metric-label">OOD ECE</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Results -->
+
 
 <!-- Image carousel -->
 <!-- <section class="hero is-small">
