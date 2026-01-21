@@ -743,8 +743,6 @@ a:focus {
   .results-table,
   .table {
     background: var(--background-secondary);
-    border-color: var(--border-color);
-    color: var(--text-primary);
   }
   .results-table thead th,
   .table thead th {
@@ -765,6 +763,7 @@ a:focus {
   .results-table td,
   .table th,
   .table td {
+    background: var(--background-secondary);
     color: var(--text-primary);
     border-color: var(--border-color);
   }
