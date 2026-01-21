@@ -3,43 +3,43 @@ const defaultBins = [0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95];
 
 const resultsData = {
     validation: {
-        accuracy: 0.9928909952606635,
-        macroF1: 0.9915850584405499,
-        microF1: 0.9928909952606635,
-        top5: 0.9988151658767772,
-        ece: 0.0028264240772238295,
+        accuracy: null,
+        macroF1: null,
+        microF1: null,
+        top5: null,
+        ece: null,
         latencyMs: null,
-        throughput: 16.06,
-        samples: '838/844',
+        throughput: null,
+        samples: '-/-',
         confusion: {
-            labels: ["A","B","C","D","E","F","G","H","I","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y"],
+            labels: [],
             matrix: null
         },
         calibration: {
             bins: defaultBins,
             accuracy: null,
             confidence: null,
-            ece: 0.0028264240772238295
+            ece: null
         }
     },
     test: {
-        accuracy: 0.3368882687132463,
-        macroF1: 0.3201624419954927,
-        microF1: 0.3368882687132463,
-        top5: 0.6265324429383036,
-        ece: 0.29637046896614083,
+        accuracy: null,
+        macroF1: null,
+        microF1: null,
+        top5: null,
+        ece: null,
         latencyMs: null,
-        throughput: 16.063614445058608,
-        samples: '3380/10033',
+        throughput: null,
+        samples: '-/-',
         confusion: {
-            labels: ["A","B","C","D","E","F","G","H","I","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y"],
+            labels: [],
             matrix: null
         },
         calibration: {
             bins: defaultBins,
             accuracy: null,
             confidence: null,
-            ece: 0.29637046896614083
+            ece: null
         }
     },
     validationBest: {},
@@ -399,53 +399,47 @@ function renderConfusionAndCalibration(data) {
     const testLabels = Array.isArray(testConf.labels) && testConf.labels.length ? testConf.labels : defaultLabels;
     const valMatrixProvided = Array.isArray(valConf.matrix);
     const testMatrixProvided = Array.isArray(testConf.matrix);
-    const valMatrix = valMatrixProvided ? valConf.matrix : createPlaceholderMatrix(valLabels.length || 1);
-    const testMatrix = testMatrixProvided ? testConf.matrix : createPlaceholderMatrix(testLabels.length || 1);
+    if (!valMatrixProvided || !testMatrixProvided) return;
+    const valMatrix = valConf.matrix;
+    const testMatrix = testConf.matrix;
 
     const valCal = val.calibration || {};
     const testCal = tst.calibration || {};
     const valBins = valCal.bins || [];
     const testBins = testCal.bins || [];
-    const valFallback = createCalibrationFallback(valBins);
-    const testFallback = createCalibrationFallback(testBins);
     const valAccProvided = Array.isArray(valCal.accuracy);
     const valConfProvided = Array.isArray(valCal.confidence);
     const testAccProvided = Array.isArray(testCal.accuracy);
     const testConfProvided = Array.isArray(testCal.confidence);
-    const valAcc = valAccProvided ? valCal.accuracy : valFallback.accuracy;
-    const valConfArr = valConfProvided ? valCal.confidence : valFallback.confidence;
-    const testAcc = testAccProvided ? testCal.accuracy : testFallback.accuracy;
-    const testConfArr = testConfProvided ? testCal.confidence : testFallback.confidence;
+    if (!valAccProvided || !valConfProvided || !testAccProvided || !testConfProvided) return;
+    const valAcc = valCal.accuracy;
+    const valConfArr = valCal.confidence;
+    const testAcc = testCal.accuracy;
+    const testConfArr = testCal.confidence;
 
     const confusionTargets = [
-        { canvas: document.getElementById('confusion-canvas'), tooltip: document.getElementById('confusion-tooltip'), labels: valLabels, matrix: valMatrix, fallback: !valMatrixProvided },
-        { canvas: document.getElementById('confusion-test-canvas'), tooltip: document.getElementById('confusion-test-tooltip'), labels: testLabels, matrix: testMatrix, fallback: !testMatrixProvided }
+        { canvas: document.getElementById('confusion-canvas'), tooltip: document.getElementById('confusion-tooltip'), labels: valLabels, matrix: valMatrix },
+        { canvas: document.getElementById('confusion-test-canvas'), tooltip: document.getElementById('confusion-test-tooltip'), labels: testLabels, matrix: testMatrix }
     ];
-    confusionTargets.forEach(({ canvas, tooltip, labels, matrix, fallback }) => {
+    confusionTargets.forEach(({ canvas, tooltip, labels, matrix }) => {
         if (!canvas) return;
         drawConfusionMatrix(canvas, labels, matrix, 1);
         if (!canvas.dataset.hoverBound) {
             attachConfusionHover(canvas, tooltip, { confusion: { labels, matrix } });
             canvas.dataset.hoverBound = 'true';
         }
-        if (fallback) {
-            showGraphFallback(canvas, 'failed to render the correspoding graph');
-        }
     });
 
     const calibrationTargets = [
-        { canvas: document.getElementById('calibration-canvas'), tooltip: document.getElementById('calibration-tooltip'), bins: valBins, accuracy: valAcc, confidence: valConfArr, fallback: !(valAccProvided && valConfProvided) },
-        { canvas: document.getElementById('calibration-test-canvas'), tooltip: document.getElementById('calibration-test-tooltip'), bins: testBins, accuracy: testAcc, confidence: testConfArr, fallback: !(testAccProvided && testConfProvided) }
+        { canvas: document.getElementById('calibration-canvas'), tooltip: document.getElementById('calibration-tooltip'), bins: valBins, accuracy: valAcc, confidence: valConfArr },
+        { canvas: document.getElementById('calibration-test-canvas'), tooltip: document.getElementById('calibration-test-tooltip'), bins: testBins, accuracy: testAcc, confidence: testConfArr }
     ];
-    calibrationTargets.forEach(({ canvas, tooltip, bins, accuracy, confidence, fallback }) => {
+    calibrationTargets.forEach(({ canvas, tooltip, bins, accuracy, confidence }) => {
         if (!canvas) return;
         drawCalibrationCurve(canvas, bins && bins.length ? bins : defaultBins, accuracy, confidence, 1);
         if (!canvas.dataset.hoverBound) {
             attachCalibrationHover(canvas, tooltip, { calibration: { bins, accuracy, confidence } });
             canvas.dataset.hoverBound = 'true';
-        }
-        if (fallback) {
-            showGraphFallback(canvas, 'failed to render the correspoding graph');
         }
     });
 }
@@ -455,30 +449,6 @@ async function loadResultsFiles(data) {
     const toNumber = (value, fallback = 0) => {
         const num = Number(value);
         return Number.isFinite(num) ? num : fallback;
-    };
-    const deriveBins = (cal, fallbackBins) => {
-        if (Array.isArray(cal.bin_confidence) && cal.bin_confidence.length) return { bins: cal.bin_confidence, fallback: false };
-        if (Array.isArray(cal.bin_edges) && cal.bin_edges.length > 1) {
-            return { bins: cal.bin_edges.slice(0, -1).map((start, idx) => (start + cal.bin_edges[idx + 1]) / 2), fallback: false };
-        }
-        if (typeof cal.bins === 'number') return { bins: defaultBins, fallback: true };
-        return { bins: fallbackBins, fallback: true };
-    };
-
-    const showGraphFallback = (canvas, message) => {
-        if (!canvas) return;
-        const wrap = canvas.parentElement;
-        if (!wrap) return;
-        let note = wrap.querySelector('.graph-error');
-        if (!note) {
-            note = document.createElement('p');
-            note.className = 'graph-error';
-            note.style.marginTop = '0.35rem';
-            note.style.color = 'var(--text-secondary)';
-            note.style.fontSize = '0.8rem';
-        }
-        note.textContent = message;
-        wrap.appendChild(note);
     };
 
     try {
@@ -494,7 +464,11 @@ async function loadResultsFiles(data) {
                 : updated.validation.confusion.labels;
             const matrix = detailed.confusion_matrix_normalized || detailed.confusion_matrix;
 
-            const { bins, fallback: binsFallback } = deriveBins(cal, updated.validation.calibration.bins);
+            const bins = Array.isArray(cal.bin_confidence) && cal.bin_confidence.length
+                ? cal.bin_confidence
+                : (Array.isArray(cal.bin_edges) && cal.bin_edges.length > 1
+                    ? cal.bin_edges.slice(0, -1).map((start, idx) => (start + cal.bin_edges[idx + 1]) / 2)
+                    : defaultBins);
             const valCorrect = toNumber(basic.correct_predictions);
             const valTotal = toNumber(basic.total_predictions);
 
@@ -509,19 +483,16 @@ async function loadResultsFiles(data) {
                 samples: `${valCorrect || 0}/${valTotal || 0}`,
                 confusion: {
                     labels,
-                    matrix: Array.isArray(matrix) ? matrix : createPlaceholderMatrix(labels.length || defaultLabels.length)
+                    matrix: Array.isArray(matrix) ? matrix : null
                 },
                 calibration: {
                     bins,
-                    accuracy: Array.isArray(cal.bin_accuracy) ? cal.bin_accuracy : createCalibrationFallback(bins).accuracy,
-                    confidence: Array.isArray(cal.bin_confidence) ? cal.bin_confidence : createCalibrationFallback(bins).confidence,
+                    accuracy: Array.isArray(cal.bin_accuracy) ? cal.bin_accuracy : null,
+                    confidence: Array.isArray(cal.bin_confidence) ? cal.bin_confidence : null,
                     ece: typeof cal.ece === 'number' ? cal.ece : updated.validation.calibration.ece
-                },
-                isOOD: false,
-                _fallbackFlags: {
-                    bins: binsFallback,
-                    matrix: !Array.isArray(matrix)
                 }
+                ,
+                isOOD: false
             };
         }
     } catch (err) {
@@ -541,7 +512,11 @@ async function loadResultsFiles(data) {
                 : updated.test.confusion.labels;
             const matrix = detailed.confusion_matrix_normalized || detailed.confusion_matrix;
 
-            const { bins, fallback: binsFallback } = deriveBins(cal, updated.test.calibration.bins);
+            const bins = Array.isArray(cal.bin_confidence) && cal.bin_confidence.length
+                ? cal.bin_confidence
+                : (Array.isArray(cal.bin_edges) && cal.bin_edges.length > 1
+                    ? cal.bin_edges.slice(0, -1).map((start, idx) => (start + cal.bin_edges[idx + 1]) / 2)
+                    : defaultBins);
 
             updated.test = {
                 accuracy: toNumber(basic.top1_accuracy ?? basic.accuracy, updated.test.accuracy),
@@ -554,19 +529,15 @@ async function loadResultsFiles(data) {
                 samples: `${basic.correct_predictions ?? 0}/${basic.total_predictions ?? 0}`,
                 confusion: {
                     labels,
-                    matrix: Array.isArray(matrix) ? matrix : createPlaceholderMatrix(labels.length || defaultLabels.length)
+                    matrix: Array.isArray(matrix) ? matrix : null
                 },
                 calibration: {
                     bins,
-                    accuracy: Array.isArray(cal.bin_accuracy) ? cal.bin_accuracy : createCalibrationFallback(bins).accuracy,
-                    confidence: Array.isArray(cal.bin_confidence) ? cal.bin_confidence : createCalibrationFallback(bins).confidence,
+                    accuracy: Array.isArray(cal.bin_accuracy) ? cal.bin_accuracy : null,
+                    confidence: Array.isArray(cal.bin_confidence) ? cal.bin_confidence : null,
                     ece: typeof cal.ece === 'number' ? cal.ece : updated.test.calibration.ece
                 },
-                isOOD: true,
-                _fallbackFlags: {
-                    bins: binsFallback,
-                    matrix: !Array.isArray(matrix)
-                }
+                isOOD: true
             };
         }
     } catch (err) {
