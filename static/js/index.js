@@ -311,27 +311,29 @@ function formatThroughput(value) {
 function renderResults(data) {
     if (!data) return;
 
+    setText('metric-validate-top1', formatPercent(data.test.accuracy));
+    setText('macro-validate-f1', formatPercent(data.test.macroF1));
+    setText('micro-validate-f1', formatPercent(data.test.microF1 ?? data.test.accuracy ?? 0));
+    setText('metric-validate-top5', formatPercent(data.test.top5));
     setText('metric-test-top1', formatPercent(data.test.accuracy));
     setText('macro-test-f1', formatPercent(data.test.macroF1));
     setText('micro-test-f1', formatPercent(data.test.microF1 ?? data.test.accuracy ?? 0));
     setText('metric-test-top5', formatPercent(data.test.top5));
-    setText('metric-test-ece', formatEce(data.test.ece));
 
     const throughputValue = data.test.latencyMs && data.test.latencyMs > 0
         ? formatLatency(data.test.latencyMs)
         : formatThroughput(data.test.throughput);
     if (data.test.latencyMs && data.test.latencyMs > 0) {
-        setText('metric-throughput', throughputValue);
+        setText('metric-validate-throughput', throughputValue);
         setText('metric-test-throughput', throughputValue);
-        setText('metric-throughput-label', 'Latency (ms/img)');
     } else {
-        setText('metric-throughput', throughputValue);
+        setText('metric-validate-throughput', throughputValue);
         setText('metric-test-throughput', throughputValue);
-        setText('metric-throughput-label', 'Throughput (img/s)');
     }
 
-    setText('metric-dataset', data.dataset.name);
-    setText('dataset-badge', data.dataset.isOOD ? 'OOD Test' : 'In-dataset Test');
+    const samplesLabel = data.test.samples || '0 / 0';
+    setText('metric-validate-samples', samplesLabel);
+    setText('metric-test-samples', samplesLabel);
 
     renderBaselineChart(data.baselines || []);
 
@@ -354,8 +356,6 @@ function renderResults(data) {
             pairs.appendChild(item);
         });
     }
-    setText('calibration-ece', formatEce(data.calibration.ece));
-
     const oodSection = document.getElementById('ood-results');
     if (oodSection && data.ood) {
         oodSection.style.display = 'block';
@@ -377,22 +377,31 @@ function renderConfusionAndCalibration(data) {
     const accuracy = Array.isArray(data.calibration.accuracy) ? data.calibration.accuracy : fallback.accuracy;
     const confidence = Array.isArray(data.calibration.confidence) ? data.calibration.confidence : fallback.confidence;
 
-    const confusionCanvas = document.getElementById('confusion-canvas');
-    const calibrationCanvas = document.getElementById('calibration-canvas');
-    const confusionTooltip = document.getElementById('confusion-tooltip');
-    const calibrationTooltip = document.getElementById('calibration-tooltip');
+    const confusionTargets = [
+        { canvas: document.getElementById('confusion-canvas'), tooltip: document.getElementById('confusion-tooltip') },
+        { canvas: document.getElementById('confusion-test-canvas'), tooltip: document.getElementById('confusion-test-tooltip') }
+    ];
+    confusionTargets.forEach(({ canvas, tooltip }) => {
+        if (!canvas) return;
+        drawConfusionMatrix(canvas, data.confusion.labels, matrix, 1);
+        if (!canvas.dataset.hoverBound) {
+            attachConfusionHover(canvas, tooltip, data);
+            canvas.dataset.hoverBound = 'true';
+        }
+    });
 
-    drawConfusionMatrix(confusionCanvas, data.confusion.labels, matrix, 1);
-    drawCalibrationCurve(calibrationCanvas, bins, accuracy, confidence, 1);
-
-    if (!confusionCanvas.dataset.hoverBound) {
-        attachConfusionHover(confusionCanvas, confusionTooltip, data);
-        confusionCanvas.dataset.hoverBound = 'true';
-    }
-    if (!calibrationCanvas.dataset.hoverBound) {
-        attachCalibrationHover(calibrationCanvas, calibrationTooltip, data);
-        calibrationCanvas.dataset.hoverBound = 'true';
-    }
+    const calibrationTargets = [
+        { canvas: document.getElementById('calibration-canvas'), tooltip: document.getElementById('calibration-tooltip') },
+        { canvas: document.getElementById('calibration-test-canvas'), tooltip: document.getElementById('calibration-test-tooltip') }
+    ];
+    calibrationTargets.forEach(({ canvas, tooltip }) => {
+        if (!canvas) return;
+        drawCalibrationCurve(canvas, bins, accuracy, confidence, 1);
+        if (!canvas.dataset.hoverBound) {
+            attachCalibrationHover(canvas, tooltip, { calibration: { bins, accuracy, confidence } });
+            canvas.dataset.hoverBound = 'true';
+        }
+    });
 }
 
 async function loadResultsFiles(data) {
