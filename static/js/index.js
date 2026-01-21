@@ -100,7 +100,7 @@ function renderBaselineChart(baselines) {
         const bars = document.createElement('div');
         bars.className = 'bar-values';
 
-        const isComingSoon = baseline.name.toLowerCase().includes('coming soon');
+        const isComingSoon = baseline.comingSoon || baseline.name.toLowerCase().includes('coming soon');
         if (isComingSoon) {
             const soon = document.createElement('div');
             soon.className = 'bar-coming-soon';
@@ -481,7 +481,7 @@ async function loadResultsFiles(data) {
             const zsMacro = toNumber(detailed.macro_f1);
             updated.baselines = [
                 { name: "Zero-shot CLIP", accuracy: zsAcc, macroF1: zsMacro },
-                { name: "Linear-probe CLIP", accuracy: 0, macroF1: 0 }
+                { name: "Linear-probe CLIP", accuracy: 0, macroF1: 0, comingSoon: true }
             ];
         }
     } catch (err) {
@@ -581,7 +581,7 @@ async function loadResultsFiles(data) {
             updated.baselines = [
                 zeroShot,
                 { name: "Fine tuned", accuracy: updated.test.accuracy ?? 0, macroF1: updated.test.macroF1 ?? 0 },
-                { name: "Linear-probe CLIP", accuracy: 0, macroF1: 0 }
+                { name: "Linear-probe CLIP", accuracy: 0, macroF1: 0, comingSoon: true }
             ];
         }
     } catch (err) {
