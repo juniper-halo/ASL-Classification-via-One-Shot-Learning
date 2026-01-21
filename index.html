@@ -364,18 +364,13 @@
                       <canvas id="confusion-canvas" class="results-canvas results-canvas--square" aria-label="Confusion matrix"></canvas>
                       <div class="canvas-tooltip" id="confusion-tooltip"></div>
                     </div>
-                    <p class="chart-caption">Rows = true labels, columns = predicted labels.</p>
-                    <h5 class="is-size-6">Most Confused Pairs</h5>
-                    <ul id="confusion-pairs"></ul>
 
                     <h4 class="is-size-6">Calibration</h4>
                     <div class="results-canvas-wrap">
                       <canvas id="calibration-canvas" class="results-canvas results-canvas--wide" aria-label="Calibration curve"></canvas>
                       <div class="canvas-tooltip" id="calibration-tooltip"></div>
                     </div>
-                    <p class="chart-caption">Blue = accuracy, gray = perfect calibration.</p>
-                    <p class="metric-label">ECE</p>
-                    <p class="metric-value" id="calibration-ece">0.00</p>
+                    <p class="chart-caption">Red = accuracy, Blue = perfect calibration.</p>
                   </div>
                 </div>
               </div>
