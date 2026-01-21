@@ -1,7 +1,3 @@
-window.HELP_IMPROVE_VIDEOJS = false;
-
-// More Works dropdown removed (UI deleted); keep CSS intact for potential reuse.
-
 // TODO: fetch static/data/test_metrics.json and map evaluator outputs into resultsData.
 const resultsData = {
     test: { accuracy: 0.00, macroF1: 0.00, top5: 0.00, ece: 0.00, latencyMs: 0.0, throughput: 0.0 },
@@ -12,7 +8,7 @@ const resultsData = {
         macroF1: 0.98698,
         loss: 0.04477,
         throughput: 10.56,
-        samples: "833/844",
+        samples: "844",
         classes: 24
     },
     baselines: [
@@ -86,23 +82,15 @@ function renderBaselineChart(baselines) {
     });
 }
 
-function generateRandomMatrix(size) {
-    const matrix = [];
-    for (let i = 0; i < size; i++) {
-        const row = [];
-        for (let j = 0; j < size; j++) {
-            const base = i === j ? 60 + Math.random() * 20 : Math.random() * 8;
-            row.push(Math.round(base));
-        }
-        matrix.push(row);
-    }
-    return matrix;
+function createPlaceholderMatrix(size) {
+    return Array.from({ length: size }, (_, row) =>
+        Array.from({ length: size }, (_, col) => (row === col ? 1 : 0))
+    );
 }
 
-function generateCalibrationStub(bins) {
-    const accuracy = bins.map((b) => Math.max(0, Math.min(1, b + (Math.random() - 0.5) * 0.08)));
-    const confidence = bins.map((b) => Math.max(0, Math.min(1, b + (Math.random() - 0.5) * 0.04)));
-    return { accuracy, confidence };
+function createCalibrationFallback(bins) {
+    const series = bins.map((bin) => Math.max(0, Math.min(1, bin)));
+    return { accuracy: series, confidence: series };
 }
 
 function setupCanvasSize(canvas, height = 320) {
@@ -240,7 +228,9 @@ function drawCalibrationCurve(canvas, bins, accuracy, confidence, progress, high
 function attachConfusionHover(canvas, tooltip, data) {
     if (!canvas || !tooltip) return;
     const labels = data.confusion.labels;
-    const matrix = data.confusion.matrix || generateRandomMatrix(labels.length);
+    const matrix = Array.isArray(data.confusion.matrix)
+        ? data.confusion.matrix
+        : createPlaceholderMatrix(labels.length);
 
     canvas.addEventListener('mousemove', (event) => {
         const rect = canvas.getBoundingClientRect();
@@ -274,8 +264,9 @@ function attachConfusionHover(canvas, tooltip, data) {
 function attachCalibrationHover(canvas, tooltip, data) {
     if (!canvas || !tooltip) return;
     const bins = data.calibration.bins;
-    const accuracy = data.calibration.accuracy || generateCalibrationStub(bins).accuracy;
-    const confidence = data.calibration.confidence || generateCalibrationStub(bins).confidence;
+    const fallback = createCalibrationFallback(bins);
+    const accuracy = Array.isArray(data.calibration.accuracy) ? data.calibration.accuracy : fallback.accuracy;
+    const confidence = Array.isArray(data.calibration.confidence) ? data.calibration.confidence : fallback.confidence;
 
     canvas.addEventListener('mousemove', (event) => {
         const rect = canvas.getBoundingClientRect();
@@ -372,11 +363,13 @@ function renderResults(data) {
 }
 
 function renderConfusionAndCalibration(data) {
-    const matrix = data.confusion.matrix || generateRandomMatrix(data.confusion.labels.length);
+    const matrix = Array.isArray(data.confusion.matrix)
+        ? data.confusion.matrix
+        : createPlaceholderMatrix(data.confusion.labels.length);
     const bins = data.calibration.bins;
-    const calibrationStub = generateCalibrationStub(bins);
-    const accuracy = data.calibration.accuracy || calibrationStub.accuracy;
-    const confidence = data.calibration.confidence || calibrationStub.confidence;
+    const fallback = createCalibrationFallback(bins);
+    const accuracy = Array.isArray(data.calibration.accuracy) ? data.calibration.accuracy : fallback.accuracy;
+    const confidence = Array.isArray(data.calibration.confidence) ? data.calibration.confidence : fallback.confidence;
 
     const confusionCanvas = document.getElementById('confusion-canvas');
     const calibrationCanvas = document.getElementById('calibration-canvas');
@@ -437,42 +430,6 @@ async function loadResultsFiles(data) {
 }
 
 
-// Copy BibTeX to clipboard
-function copyBibTeX() {
-    const bibtexElement = document.getElementById('bibtex-code');
-    const button = document.querySelector('.copy-bibtex-btn');
-    const copyText = button.querySelector('.copy-text');
-    
-    if (bibtexElement) {
-        navigator.clipboard.writeText(bibtexElement.textContent).then(function() {
-            // Success feedback
-            button.classList.add('copied');
-            copyText.textContent = 'Cop';
-            
-            setTimeout(function() {
-                button.classList.remove('copied');
-                copyText.textContent = 'Copy';
-            }, 2000);
-        }).catch(function(err) {
-            console.error('Failed to copy: ', err);
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = bibtexElement.textContent;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            
-            button.classList.add('copied');
-            copyText.textContent = 'Cop';
-            setTimeout(function() {
-                button.classList.remove('copied');
-                copyText.textContent = 'Copy';
-            }, 2000);
-        });
-    }
-}
-
 // Scroll to top functionality
 function scrollToTop() {
     window.scrollTo({
@@ -491,55 +448,7 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// Video carousel autoplay when in view
-function setupVideoCarouselAutoplay() {
-    const carouselVideos = document.querySelectorAll('.results-carousel video');
-    
-    if (carouselVideos.length === 0) return;
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const video = entry.target;
-            if (entry.isIntersecting) {
-                // Video is in view, play it
-                video.play().catch(e => {
-                    // Autoplay failed, probably due to browser policy
-                    console.log('Autoplay prevented:', e);
-                });
-            } else {
-                // Video is out of view, pause it
-                video.pause();
-            }
-        });
-    }, {
-        threshold: 0.5 // Trigger when 50% of the video is visible
-    });
-    
-    carouselVideos.forEach(video => {
-        observer.observe(video);
-    });
-}
-
 $(document).ready(function() {
-    // Check for click events on the navbar burger icon
-
-    var options = {
-		slidesToScroll: 1,
-		slidesToShow: 1,
-		loop: true,
-		infinite: true,
-		autoplay: true,
-		autoplaySpeed: 5000,
-    }
-
-	// Initialize all div with carousel class
-    var carousels = bulmaCarousel.attach('.carousel', options);
-	
-    bulmaSlider.attach();
-    
-    // Setup video autoplay for carousel
-    setupVideoCarouselAutoplay();
-
     renderResults(resultsData);
 
     renderConfusionAndCalibration(resultsData);
