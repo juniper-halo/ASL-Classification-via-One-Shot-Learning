@@ -326,20 +326,15 @@
             <div class="bar-rows" id="baseline-chart-rows"></div>
           </div>
 
-          <div class="section-heading-inline">
-            <h3>Detailed Analysis</h3>
-            <a class="button is-normal is-rounded is-dark" href="https://huggingface.co/datasets/Marxulia/asl_sign_languages_alphabets_v03" target="_blank" rel="noopener">
-              <span class="icon">
-                <i class="fas fa-database"></i>
-              </span>
-              <span>Dataset</span>
-            </a>
-          </div>
+          <h3>Detailed Analysis</h3>
           <div class="columns is-variable is-5">
             <div class="column is-half">
               <div class="card analysis-box">
                 <div class="card-content">
-                  <p class="title is-5">Validation Pass</p>
+                  <div class="analysis-heading">
+                    <p class="title is-5">Validation Pass</p>
+                    <a class="dataset-chip-inline" href="https://huggingface.co/datasets/Marxulia/asl_sign_languages_alphabets_v03" target="_blank" rel="noopener">Dataset</a>
+                  </div>
                   <div class="metrics-grid">
                     <div class="metric-card metric-chip">
                       <p class="metric-chip-value" id="metric-validate-top1">0.00</p>
@@ -390,7 +385,10 @@
             <div class="column is-half">
               <div class="card analysis-box">
                 <div class="card-content">
-                  <p class="title is-5">Testing Pass</p>
+                  <div class="analysis-heading">
+                    <p class="title is-5">Testing Pass</p>
+                    <a class="dataset-chip-inline" href="https://huggingface.co/datasets/Marxulia/asl_sign_languages_alphabets_v03" target="_blank" rel="noopener">Dataset</a>
+                  </div>
                   <div class="metrics-grid">
                     <div class="metric-card metric-chip">
                       <p class="metric-chip-value" id="metric-test-top1">0.00</p>
