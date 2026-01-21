@@ -675,16 +675,16 @@ a:focus {
     --primary-hover: #7bb5ff;
     --secondary-color: #cbd5e1;
     --accent-color: #7dd3fc;
-    --text-primary: #f8fafc;
-    --text-secondary: #e5e7eb;
-    --text-light: #d1d5db;
-    --background-primary: #0f172a;
-    --background-secondary: #111827;
-    --background-accent: #1e293b;
-    --border-color: #1f2937;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.45), 0 2px 4px -2px rgb(0 0 0 / 0.45);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+    --text-primary: #f5f7fb;
+    --text-secondary: #c6cfdd;
+    --text-light: #9aa6bc;
+    --background-primary: #0b1220;   /* page */
+    --background-secondary: #111a2c; /* card */
+    --background-accent: #162338;    /* accent panels/headers */
+    --border-color: #22314a;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.45), 0 4px 6px -4px rgb(0 0 0 / 0.45);
     --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.55), 0 8px 10px -6px rgb(0 0 0 / 0.55);
     --gradient-primary: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);
     --gradient-accent: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%);
@@ -731,12 +731,52 @@ a:focus {
   .content.has-text-justified li {
     color: var(--text-secondary) !important;
   }
-
+  
   .content.has-text-justified h3,
   .content.has-text-justified h4,
   .content.has-text-justified h5,
   .content.has-text-justified h6 {
     color: var(--text-primary) !important;
+  }
+
+  /* Tables */
+  .results-table,
+  .table {
+    background: var(--background-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+  }
+  .results-table thead th,
+  .table thead th {
+    background: var(--background-accent);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+  }
+  .results-table tbody tr,
+  .table tbody tr {
+    background: var(--background-secondary);
+    border-color: var(--border-color);
+  }
+  .results-table tbody tr:nth-child(even),
+  .table tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--background-accent) 40%, var(--background-secondary));
+  }
+  .results-table th,
+  .results-table td,
+  .table th,
+  .table td {
+    color: var(--text-primary);
+    border-color: var(--border-color);
+  }
+
+  /* kbd chip */
+  kbd {
+    background: var(--background-accent);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.12rem 0.4rem;
+    box-shadow: none;
   }
 }
 
@@ -797,4 +837,3 @@ a:focus {
     border-radius: var(--border-radius);
   }
 }
-
