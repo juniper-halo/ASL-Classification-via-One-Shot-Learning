@@ -1,7 +1,7 @@
 // TODO: fetch static/data/test_metrics.json and map evaluator outputs into resultsData.
 const resultsData = {
-    test: { accuracy: 0.3368882687132463, macroF1: 0.3201624419954927, top5: 0.6265324429383036, ece: 0.29637046896614083, latencyMs: null, throughput: 16.063614445058608 },
-    dataset: { name: "Marxulia/asl_sign_languages_alphabets_v03", split: "train", isOOD: false },
+    test: { accuracy: 0.00, macroF1: 0.00, top5: 0.00, ece: 0.00, latencyMs: 0.0, throughput: 0.0 },
+    dataset: { name: "Dataset", split: "test", isOOD: false },
     validationBest: {
         epoch: 9,
         accuracy: 0.98697,
@@ -14,18 +14,18 @@ const resultsData = {
     baselines: [
         { name: "Zero-shot CLIP", accuracy: 0.00, macroF1: 0.00 },
         { name: "Linear-probe CLIP", accuracy: 0.00, macroF1: 0.00 },
-        { name: "Fine-tuned (Ours)", accuracy: 0.3368882687132463, macroF1: 0.3201624419954927 }
+        { name: "Fine-tuned (Ours)", accuracy: 0.00, macroF1: 0.00 }
     ],
     confusion: {
-        labels: ["A","B","C","D","E","F","G","H","I","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y"],
+        labels: ["A","B","C","D","E","F","G","H"],
         matrix: null,
-        mostConfusedPairs: [["M","E"],["U","H"],["E","S"],["N","S"],["Y","G"]]
+        mostConfusedPairs: []
     },
     calibration: {
         bins: [0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95],
-        accuracy: [0.05128205128205128,0.10140405616224649,0.12977983777520277,0.15213178294573643,0.1878952122854562,0.22526315789473683,0.2697516930022573,0.3223844282238443,0.4067127344521224,0.6365671641791045],
-        confidence: [0.08817583035964233,0.15754717085132733,0.25109383315365946,0.35045741094175237,0.45090973921046135,0.5496669824499832,0.6497656796505973,0.7517380628127541,0.8513918659647032,0.967638261371584],
-        ece: 0.29637046896614083
+        accuracy: null,
+        confidence: null,
+        ece: 0.00
     }
     // optional:
     // ood: { dataset: { name: "Kaggle ASL Alphabet", split: "test", isOOD: true }, test: {...} }
@@ -390,115 +390,8 @@ function renderConfusionAndCalibration(data) {
 }
 
 async function loadResultsFiles(data) {
-    const updates = {};
-
-    try {
-        const response = await fetch('static/results/test_20260121_021542_dashboard.json');
-        if (response.ok) {
-            const payload = await response.json();
-            const basic = payload.basic_evaluation || {};
-            const detailed = payload.detailed_analysis || {};
-            const cal = detailed.calibration || {};
-            const binEdges = Array.isArray(cal.bin_edges) ? cal.bin_edges : [];
-            const bins = binEdges.length > 1
-                ? binEdges.slice(0, -1).map((start, idx) => (start + binEdges[idx + 1]) / 2)
-                : data.calibration.bins;
-            const top1 = typeof basic.top1_accuracy === 'number' ? basic.top1_accuracy : basic.accuracy;
-            const macroF1 = typeof detailed.macro_f1 === 'number' ? detailed.macro_f1 : data.test.macroF1;
-
-            updates.test = {
-                accuracy: typeof top1 === 'number' ? top1 : data.test.accuracy,
-                macroF1,
-                top5: typeof basic.topk_accuracy === 'number' ? basic.topk_accuracy : data.test.top5,
-                ece: typeof cal.ece === 'number' ? cal.ece : data.test.ece,
-                latencyMs: null,
-                throughput: typeof basic.samples_per_second === 'number' ? basic.samples_per_second : data.test.throughput
-            };
-            updates.dataset = {
-                name: payload.dataset_name || data.dataset.name,
-                split: payload.split || data.dataset.split,
-                isOOD: String(payload.mode || '').toLowerCase().includes('ood')
-            };
-
-            const fineTunedAcc = updates.test.accuracy;
-            const fineTunedF1 = updates.test.macroF1;
-            updates.baselines = (data.baselines || []).map((b) => {
-                if (b.name.toLowerCase().includes('fine-tuned')) {
-                    return { ...b, accuracy: fineTunedAcc, macroF1: fineTunedF1 };
-                }
-                return b;
-            });
-
-            const labels = detailed.per_letter_performance
-                ? Object.keys(detailed.per_letter_performance)
-                : data.confusion.labels;
-            const matrix = detailed.confusion_matrix_normalized || detailed.confusion_matrix;
-            const pairs = Array.isArray(detailed.most_confused_pairs)
-                ? detailed.most_confused_pairs
-                    .map((pair) => {
-                        if (Array.isArray(pair)) return pair;
-                        if (pair && pair.true && pair.pred) return [pair.true, pair.pred];
-                        return null;
-                    })
-                    .filter(Boolean)
-                : data.confusion.mostConfusedPairs;
-
-            updates.confusion = {
-                labels,
-                matrix: Array.isArray(matrix) ? matrix : data.confusion.matrix,
-                mostConfusedPairs: pairs.length ? pairs : data.confusion.mostConfusedPairs
-            };
-
-            updates.calibration = {
-                bins,
-                accuracy: Array.isArray(cal.bin_accuracy) ? cal.bin_accuracy : data.calibration.accuracy,
-                confidence: Array.isArray(cal.bin_confidence) ? cal.bin_confidence : data.calibration.confidence,
-                ece: typeof cal.ece === 'number' ? cal.ece : data.calibration.ece
-            };
-        }
-    } catch (err) {
-        console.warn('Test metrics JSON unavailable, using stub data.', err);
-    }
-
-    if (!updates.confusion || !updates.confusion.matrix) {
-        try {
-            const response = await fetch('static/results/validation_epoch_9_confusion_matrix.json');
-            if (response.ok) {
-                const payload = await response.json();
-                updates.confusion = {
-                    labels: payload.labels || data.confusion.labels,
-                    matrix: payload.matrix || data.confusion.matrix,
-                    mostConfusedPairs: data.confusion.mostConfusedPairs
-                };
-            }
-        } catch (err) {
-            console.warn('Confusion matrix JSON unavailable, using stub data.', err);
-        }
-    }
-
-    if (!updates.calibration || !updates.calibration.accuracy) {
-        try {
-            const response = await fetch('static/results/validation_epoch_9_ece.json');
-            if (response.ok) {
-                const payload = await response.json();
-                updates.calibration = {
-                    bins: payload.bins || data.calibration.bins,
-                    accuracy: payload.accuracy || data.calibration.accuracy,
-                    confidence: payload.confidence || data.calibration.confidence,
-                    ece: typeof payload.ece === 'number' ? payload.ece : data.calibration.ece
-                };
-            }
-        } catch (err) {
-            console.warn('Calibration JSON unavailable, using stub data.', err);
-        }
-    }
-
-    return {
-        ...data,
-        ...updates,
-        confusion: updates.confusion || data.confusion,
-        calibration: updates.calibration || data.calibration
-    };
+    // No external metrics are loaded; keep the UI on stub data.
+    return data;
 }
 
 
