@@ -411,6 +411,25 @@ body {
 .results-table th,
 .results-table td {
   font-size: 0.95rem;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.results-table {
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.results-table thead th {
+  background: var(--background-accent);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.results-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
 }
 
 .results-table.is-highlighted tbody tr {
