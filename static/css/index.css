@@ -388,6 +388,7 @@ body {
 }
 
 .analysis-graphs .ece-chip .metric-chip-value {
+  margin: 0;
   font-size: 1.1rem;
   line-height: 1.2;
 }
