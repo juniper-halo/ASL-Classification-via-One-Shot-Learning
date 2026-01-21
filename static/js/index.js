@@ -31,6 +31,15 @@ const resultsData = {
     // ood: { dataset: { name: "Kaggle ASL Alphabet", split: "test", isOOD: true }, test: {...} }
 };
 
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+function scrollToTopOnLoad() {
+    if (window.location.hash) return;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+}
+
 function formatPercent(value) {
     if (typeof value !== 'number') return '0.00';
     return (value * 100).toFixed(2) + '%';
@@ -449,6 +458,8 @@ window.addEventListener('scroll', function() {
 });
 
 $(document).ready(function() {
+    scrollToTopOnLoad();
+
     renderResults(resultsData);
 
     renderConfusionAndCalibration(resultsData);
