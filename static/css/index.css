@@ -374,22 +374,23 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.28rem;
-  border-radius: 8px;
+  border-radius: 999px;
   box-shadow: var(--shadow-sm);
   background: var(--background-accent);
   border: 1px solid var(--border-color);
   white-space: nowrap;
+  overflow: visible;
 }
 
 .analysis-graphs .ece-chip .metric-chip-label {
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.2;
+  font-size: 0.78rem;
+  line-height: 1.15;
 }
 
 .analysis-graphs .ece-chip .metric-chip-value {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   line-height: 1.2;
 }
 
