@@ -364,15 +364,15 @@ body {
 
 .metric-card.ece-chip {
   position: absolute;
-  bottom: 0.4rem;
-  right: 0.4rem;
+  bottom: 0.5rem;
+  right: 0.5rem;
   z-index: 2;
-  padding: 0.15rem 0.35rem !important;
+  padding: 0.25rem 0.55rem !important;
   min-width: unset;
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
-  border-radius: 6px;
+  gap: 0.28rem;
+  border-radius: 8px;
   box-shadow: var(--shadow-sm);
   background: var(--background-accent);
   border: 1px solid var(--border-color);
@@ -380,13 +380,13 @@ body {
 
 .analysis-graphs .ece-chip .metric-chip-label {
   margin: 0;
-  font-size: 0.65rem;
-  line-height: 1.1;
+  font-size: 0.72rem;
+  line-height: 1.15;
 }
 
 .analysis-graphs .ece-chip .metric-chip-value {
-  font-size: 0.8rem;
-  line-height: 1.1;
+  font-size: 0.9rem;
+  line-height: 1.2;
 }
 
 
