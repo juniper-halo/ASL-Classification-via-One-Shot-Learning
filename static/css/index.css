@@ -368,7 +368,9 @@ body {
   right: 0.5rem;
   z-index: 2;
   padding: 0.25rem 0.55rem !important;
-  min-width: unset;
+  width: auto;
+  min-width: 0;
+  max-width: none;
   display: inline-flex;
   align-items: center;
   gap: 0.28rem;
@@ -376,6 +378,7 @@ body {
   box-shadow: var(--shadow-sm);
   background: var(--background-accent);
   border: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .analysis-graphs .ece-chip .metric-chip-label {
