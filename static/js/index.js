@@ -37,8 +37,17 @@ if ('scrollRestoration' in history) {
 
 function scrollToTopOnLoad() {
     if (window.location.hash) return;
+    const scrollElement = document.scrollingElement || document.documentElement;
+    scrollElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 }
+
+window.addEventListener('pageshow', scrollToTopOnLoad);
+window.addEventListener('load', () => {
+    scrollToTopOnLoad();
+    requestAnimationFrame(scrollToTopOnLoad);
+});
 
 function formatPercent(value) {
     if (typeof value !== 'number') return '0.00';
@@ -458,8 +467,6 @@ window.addEventListener('scroll', function() {
 });
 
 $(document).ready(function() {
-    scrollToTopOnLoad();
-
     renderResults(resultsData);
 
     renderConfusionAndCalibration(resultsData);
