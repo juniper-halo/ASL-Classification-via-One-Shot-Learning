@@ -401,35 +401,6 @@ body {
   flex-wrap: wrap;
 }
 
-.dataset-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.4rem 0.65rem;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  background: var(--background-accent);
-  color: var(--text-primary);
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  font-size: 0.9rem;
-}
-
-.dataset-chip:hover {
-  color: var(--primary-color);
-  border-color: color-mix(in srgb, var(--primary-color) 60%, var(--border-color));
-}
-
-.dataset-chip-label {
-  font-weight: 700;
-}
-
-.dataset-chip-link {
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-
 .metric-value {
   font-size: 1.75rem;
   font-weight: 700;
