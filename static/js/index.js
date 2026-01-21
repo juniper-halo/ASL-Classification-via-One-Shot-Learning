@@ -392,6 +392,10 @@ function renderResults(data) {
 }
 
 function renderConfusionAndCalibration(data) {
+
+    const val = data.validation || {};
+    const tst = data.test || {};
+
     const valConf = val.confusion || {};
     const testConf = tst.confusion || {};
     const defaultLabels = ["A","B","C","D","E","F","G","H"];
