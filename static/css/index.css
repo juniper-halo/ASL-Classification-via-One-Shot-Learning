@@ -671,33 +671,40 @@ a:focus {
 /* Automatic dark mode via prefers-color-scheme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary-color: #5aa4ff;
-    --primary-hover: #7bb5ff;
-    --secondary-color: #cbd5e1;
-    --accent-color: #7dd3fc;
-    --text-primary: #f5f7fb;
-    --text-secondary: #c6cfdd;
-    --text-light: #9aa6bc;
-    --background-primary: #0b1220;   /* page */
-    --background-secondary: #111a2c; /* card */
-    --background-accent: #162338;    /* accent panels/headers */
-    --border-color: #22314a;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.45), 0 4px 6px -4px rgb(0 0 0 / 0.45);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.55), 0 8px 10px -6px rgb(0 0 0 / 0.55);
-    --gradient-primary: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);
-    --gradient-accent: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%);
-    --gradient-subtle: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    --primary-color: #4dd9ff;
+    --primary-hover: #7de7ff;
+    --secondary-color: #b4c7e5;
+    --accent-color: #f6c177;
+    --text-primary: #e9edf7;
+    --text-secondary: #b7c4de;
+    --text-light: #8697b8;
+    --background-primary: #050913;
+    --background-secondary: #0b1526;
+    --background-accent: #101d33;
+    --border-color: #1f2d49;
+    --shadow-sm: 0 6px 16px rgb(0 0 0 / 0.35);
+    --shadow-md: 0 12px 28px rgb(0 0 0 / 0.45), 0 6px 18px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 22px 40px rgb(0 0 0 / 0.52), 0 14px 24px rgb(0 0 0 / 0.4);
+    --shadow-xl: 0 32px 58px rgb(0 0 0 / 0.58);
+    --gradient-primary: linear-gradient(135deg, #091226 0%, #0f243f 50%, #071423 100%);
+    --gradient-accent: linear-gradient(135deg, #0f4d88 0%, #16c6ff 55%, #6ef3ff 100%);
+    --gradient-subtle: linear-gradient(135deg, #0e1b32 0%, #091224 100%);
   }
   
   body {
-    background: var(--background-primary);
+    background:
+      radial-gradient(circle at 18% 20%, rgba(22, 173, 210, 0.08), transparent 26%),
+      radial-gradient(circle at 82% 6%, rgba(246, 193, 119, 0.1), transparent 28%),
+      var(--background-primary);
     color: var(--text-primary);
   }
   
+  .hero {
+    background: linear-gradient(180deg, rgba(8, 18, 36, 0.92), rgba(5, 9, 19, 0.98));
+  }
+
   .hero.is-light {
-    background: var(--background-secondary);
+    background: linear-gradient(145deg, rgba(14, 28, 52, 0.88), rgba(7, 15, 28, 0.96));
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
   }
@@ -705,25 +712,57 @@ a:focus {
   .publication-video,
   pre,
   code {
-    background: var(--background-accent) !important;
-    border-color: var(--border-color) !important;
+    background: linear-gradient(135deg, rgba(16, 29, 51, 0.85), rgba(9, 18, 36, 0.95)) !important;
+    border-color: color-mix(in srgb, var(--border-color) 70%, transparent) !important;
     color: var(--text-primary) !important;
+    box-shadow: var(--shadow-md);
   }
   
+  .results-canvas {
+    background: color-mix(in srgb, var(--background-accent) 82%, transparent);
+    border-color: color-mix(in srgb, var(--border-color) 85%, transparent);
+  }
+
   .footer {
-    background: var(--background-secondary);
+    background: linear-gradient(180deg, rgba(7, 15, 28, 0.96), rgba(5, 9, 19, 0.98));
     border-top: 1px solid var(--border-color);
   }
   
   .button.is-dark {
-    background: var(--text-primary) !important;
-    color: #0f172a !important;
+    background: linear-gradient(135deg, #0f2b4a 0%, #0d5fa6 52%, #4ff1ff 100%) !important;
+    color: #e8f8ff !important;
+    border: 1px solid color-mix(in srgb, var(--primary-color) 70%, transparent) !important;
+    box-shadow: 0 12px 30px rgb(0 0 0 / 0.55), 0 0 0 1px color-mix(in srgb, var(--primary-color) 18%, transparent);
   }
   
+  .button.is-dark:hover {
+    background: linear-gradient(135deg, #1261ab 0%, #26cffe 65%, #8ef3ff 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .button.is-dark:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+  }
+
   .title,
   .subtitle,
   .publication-authors {
     color: var(--text-primary) !important;
+  }
+
+  .publication-venue,
+  .badge {
+    background: color-mix(in srgb, var(--primary-color) 18%, var(--background-accent));
+    color: var(--text-primary);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 40%, var(--border-color));
+  }
+
+  .publication-awards {
+    background: linear-gradient(135deg, rgba(246, 193, 119, 0.24), rgba(246, 193, 119, 0.08));
+    color: #ffdca3;
+    border-left-color: #f6c177;
   }
 
   .content.has-text-justified,
@@ -739,84 +778,58 @@ a:focus {
     color: var(--text-primary) !important;
   }
 
-  /* Tables */
+  .metric-card,
+  .bar-chart,
   .results-table,
-  .table {
-    background: var(--background-secondary);
+  .table,
+  table {
+    background: color-mix(in srgb, var(--background-secondary) 92%, transparent);
+    border-color: color-mix(in srgb, var(--border-color) 92%, transparent);
+    box-shadow: var(--shadow-sm);
   }
+
   .results-table thead th,
-  .table thead th {
-    background: var(--background-accent);
+  .table thead th,
+  table thead th {
+    background: color-mix(in srgb, var(--background-accent) 85%, transparent);
     color: var(--text-primary);
-    border-color: var(--border-color);
+    border-bottom: 1px solid var(--border-color);
   }
+
   .results-table tbody tr,
-  .table tbody tr {
-    background: var(--background-secondary);
+  .table tbody tr,
+  table tbody tr {
+    background: color-mix(in srgb, var(--background-secondary) 95%, transparent);
     border-color: var(--border-color);
   }
+
   .results-table tbody tr:nth-child(even),
-  .table tbody tr:nth-child(even) {
-    background: color-mix(in srgb, var(--background-accent) 40%, var(--background-secondary));
+  .table tbody tr:nth-child(even),
+  table tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--background-accent) 35%, var(--background-secondary));
   }
+
   .results-table th,
   .results-table td,
   .table th,
-  .table td {
-    background: var(--background-secondary);
-    color: var(--text-primary);
-    border-color: var(--border-color);
-  }
-
-  /* kbd chip */
-  kbd {
-    background: var(--background-accent);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.12rem 0.4rem;
-    box-shadow: none;
-  }
-}
-
-/* Dark-mode-safe defaults for markdown/Bulma/UA elements */
-@media (prefers-color-scheme: dark) {
-  /* Tables: catch-all + Bulma .table + your .results-table */
-  table,
-  .table,
-  .results-table {
-    background: var(--background-primary);
-    color: var(--text-primary);
-    border-color: var(--border-color);
-  }
-
-  table th,
-  table td,
-  .table th,
   .table td,
-  .results-table th,
-  .results-table td {
-    background: var(--background-primary);
+  table th,
+  table td {
+    background: transparent;
     color: var(--text-primary);
     border-color: var(--border-color);
   }
 
-  table thead th,
-  .table thead th,
-  .results-table thead th {
-    background: var(--background-accent);
-    color: var(--text-primary);
-    border-bottom-color: var(--border-color);
+  .scroll-to-top {
+    background: color-mix(in srgb, var(--primary-color) 80%, #0b1324);
+    box-shadow: var(--shadow-lg);
   }
 
-  /* Optional: subtle striping for generic tables */
-  table tbody tr:nth-child(even),
-  .table tbody tr:nth-child(even),
-  .results-table tbody tr:nth-child(even) {
-    background: color-mix(in srgb, var(--background-accent) 25%, var(--background-primary));
+  .scroll-to-top:hover {
+    background: color-mix(in srgb, var(--primary-hover) 85%, #0f1b30);
+    box-shadow: var(--shadow-xl);
   }
 
-  /* kbd: override Bulma/UA light styling */
   kbd {
     background: var(--background-accent);
     color: var(--text-primary);
@@ -827,9 +840,8 @@ a:focus {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 
-  /* blockquote: add surface + accent bar */
   blockquote {
-    background: var(--background-accent);
+    background: color-mix(in srgb, var(--background-accent) 90%, transparent);
     color: var(--text-primary);
     border-left: 3px solid var(--primary-color);
     padding: 0.75rem 1rem;
