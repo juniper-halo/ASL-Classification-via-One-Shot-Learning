@@ -317,6 +317,15 @@
             We report results on (i) a held-out validation split, (ii) the final test split, and optionally (iii) cross-dataset OOD evaluation when available.
           </p>
 
+          <h3>Baseline comparison</h3>
+          <div class="bar-chart" id="baseline-chart">
+            <div class="bar-legend">
+              <span class="legend-item"><span class="legend-swatch legend-acc"></span>Top-1 Accuracy</span>
+              <span class="legend-item"><span class="legend-swatch legend-f1"></span>Macro F1</span>
+            </div>
+            <div class="bar-rows" id="baseline-chart-rows"></div>
+          </div>
+
           <h3>Headline metrics</h3>
           <div class="columns is-multiline results-cards">
             <div class="column is-one-third">
@@ -372,14 +381,7 @@
             </div>
           </div>
 
-          <h3>Baseline comparison</h3>
-          <div class="bar-chart" id="baseline-chart">
-            <div class="bar-legend">
-              <span class="legend-item"><span class="legend-swatch legend-acc"></span>Top-1 Accuracy</span>
-              <span class="legend-item"><span class="legend-swatch legend-f1"></span>Macro F1</span>
-            </div>
-            <div class="bar-rows" id="baseline-chart-rows"></div>
-          </div>
+
 
           <h3>Validation vs Test</h3>
           <div class="table-container">
