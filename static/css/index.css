@@ -354,11 +354,21 @@ body {
 
 .analysis-graphs .results-canvas-wrap {
   width: 100%;
+  position: relative;
 }
 
 .analysis-graphs canvas.results-canvas {
   display: block;
   width: 100% !important;
+}
+
+.ece-chip {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  padding: 0.65rem 0.75rem;
+  min-width: 140px;
 }
 
 .metric-value {
