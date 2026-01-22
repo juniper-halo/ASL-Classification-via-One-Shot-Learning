@@ -491,6 +491,22 @@ body {
   background: var(--accent-color);
 }
 
+.confusion-legend {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0.5rem 0 1rem;
+}
+
+.legend-swatch--confusion {
+  width: 46px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(90, 164, 255, 0.18), rgba(90, 164, 255, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .bar-row {
   display: grid;
   grid-template-columns: minmax(160px, 220px) 1fr;
