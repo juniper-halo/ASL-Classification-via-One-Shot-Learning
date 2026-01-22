@@ -514,7 +514,9 @@ body {
 }
 
 .confusion-row .results-canvas-wrap {
-  flex: 0 0 auto;
+  flex: 0 0 360px;
+  width: 360px;
+  max-width: 100%;
 }
 
 .confusion-legend--side {
@@ -523,10 +525,21 @@ body {
   white-space: nowrap;
 }
 
+.confusion-legend--side .legend-item {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
 @media (max-width: 768px) {
   .confusion-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .confusion-row .results-canvas-wrap {
+    width: 100%;
+    flex-basis: auto;
   }
 
   .confusion-legend--side {
